@@ -8,15 +8,15 @@
 
 This project implements a mini AI/ML pipeline that:
 
-	1.	Transcribes speech from audio (Whisper).
-	2.	Extracts discussion topics (KeyBERT + embeddings).
-	3.	Generates intelligent summaries using topic-guided extractive summarization.
-	4.	Vectorizes topics and fuses them with psychometric profiles using weighted combination.
-	5.	Computes a compatibility score between two synthetic users.
-	6.	Exposes the pipeline via a FastAPI application with three endpoints:
-	    - POST /transcribe - Transcribe audio to text
-	    - POST /summarise - Extract topics and summarize text
-	    - POST /match - Compute user compatibility with optional topic weighting
+1.	Transcribes speech from audio (Whisper).
+2.	Extracts discussion topics (KeyBERT + embeddings).
+3.	Generates intelligent summaries using topic-guided extractive summarization.
+4.	Vectorizes topics and fuses them with psychometric profiles using weighted combination.
+5.	Computes a compatibility score between two synthetic users.
+6.	Exposes the pipeline via a FastAPI application with three endpoints:
+ - POST /transcribe - Transcribe audio to text
+ - POST /summarise - Extract topics and summarize text
+ - POST /match - Compute user compatibility with optional topic weighting
 
 ## Project Structure
 ```markdown
