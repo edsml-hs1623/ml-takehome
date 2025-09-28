@@ -14,9 +14,9 @@ This project implements a mini AI/ML pipeline that:
 4.	Vectorizes topics and fuses them with psychometric profiles using weighted combination.
 5.	Computes a compatibility score between two synthetic users.
 6.	Exposes the pipeline via a FastAPI application with three endpoints:
- - POST /transcribe - Transcribe audio to text
- - POST /summarise - Extract topics and summarize text
- - POST /match - Compute user compatibility with optional topic weighting
+	 - POST /transcribe - Transcribe audio to text
+	 - POST /summarise - Extract topics and summarize text
+	 - POST /match - Compute user compatibility with optional topic weighting
 
 ## Project Structure
 ```markdown
