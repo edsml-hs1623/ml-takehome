@@ -2,9 +2,7 @@
 
 ## Overview
 
-![FastAPI Endpoints Workflow](image/workflow.png)
-
-*The workflow diagram shows the complete data flow from audio input through transcription, topic extraction, vectorization, and user matching to produce compatibility scores.*
+**Current Focus**: Lightweight, CPU-friendly protoptye (Whisper-base, KeyBERT, TF-IDF) that provide good performance without requiring expensive hardware.
 
 This project implements a mini AI/ML pipeline that:
 
@@ -18,7 +16,9 @@ This project implements a mini AI/ML pipeline that:
 	 - POST /summarise - Extract topics and summarize text
 	 - POST /match - Compute user compatibility with optional topic weighting
 
-**Current Focus**: Lightweight, CPU-friendly protoptye (Whisper-base, KeyBERT, TF-IDF) that provide good performance without requiring expensive hardware.
+![FastAPI Endpoints Workflow](image/workflow.png)
+
+*The workflow diagram shows the complete data flow from audio input through transcription, topic extraction, vectorization, and user matching to produce compatibility scores.*
 
 ### My Development Workflow
 1. **Experiments**: Jupyter notebooks for prototyping and analysis
