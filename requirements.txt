@@ -32,3 +32,7 @@ wheel>=0.40.0
 
 # Additional dependencies for FastAPI
 python-multipart
+
+# Topic comparison dependencies
+spacy>=3.7.0
+psutil>=5.9.0
