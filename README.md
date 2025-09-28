@@ -18,6 +18,14 @@ This project implements a mini AI/ML pipeline that:
 	 - POST /summarise - Extract topics and summarize text
 	 - POST /match - Compute user compatibility with optional topic weighting
 
+**Current Focus**: Lightweight, CPU-friendly protoptye (Whisper-base, KeyBERT, TF-IDF) that provide good performance without requiring expensive hardware.
+
+### My Development Workflow
+1. **Experiments**: Jupyter notebooks for prototyping and analysis
+2. **Service Development**: Modular Python services with clear interfaces
+3. **API Integration**: FastAPI endpoints with comprehensive documentation
+5. **Deployment**: Docker containerization for production readiness
+
 ## Project Structure
 ```markdown
 ml_takehome/
@@ -248,14 +256,6 @@ upload audio_file
 ```
 
 ## Architecture & Design Decisions
-
-**Current Focus**: Lightweight, CPU-friendly protoptye (Whisper-base, KeyBERT, TF-IDF) that provide good performance without requiring expensive hardware.
-
-### Development Workflow
-1. **Experiments**: Jupyter notebooks for prototyping and analysis
-2. **Service Development**: Modular Python services with clear interfaces
-3. **API Integration**: FastAPI endpoints with comprehensive documentation
-5. **Deployment**: Docker containerization for production readiness
 
 ### System Architecture
 
