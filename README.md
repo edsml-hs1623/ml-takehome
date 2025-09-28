@@ -1,7 +1,13 @@
 # ml-takehome
 
 ## Overview
+
+![FastAPI Endpoints Workflow](image/workflow.png)
+
+*The workflow diagram shows the complete data flow from audio input through transcription, topic extraction, vectorization, and user matching to produce compatibility scores.*
+
 This project implements a mini AI/ML pipeline that:
+
 	1.	Transcribes speech from audio (Whisper).
 	2.	Extracts discussion topics (KeyBERT + embeddings).
 	3.	Generates intelligent summaries using topic-guided extractive summarization.
@@ -155,12 +161,74 @@ upload audio_file
 ```
 
 
+### POST /transcribe-summarise
+- **Input**: Audio file (wav, mp3, etc.)
+- **Output**: Transcript + topics + summary
+- **Description**: Combined endpoint for complete audio processing pipeline
+
+#### Transcribe-Summarise Request Example:
+```bash
+upload audio_file
+```
+
+#### Transcribe-Summarise Response Example:
+```json
+{
+  "transcript": "So let's let's take it past the point where you have these scales...",
+  "topics": ["starships", "terraforming", "scales", "plan", "synchronization"],
+  "summary": "The discussion covers Mars mission planning, including reusable ships, orbital synchronization, and terraforming strategies."
+}
+```
+
+### POST /topic-extraction-comparison
+- **Input**: Transcript text + number of topics
+- **Output**: Comparison of different topic extraction methods
+- **Description**: Compare TF-IDF, spaCy, KeyBERT, DistilBERT+Clustering, and SentenceTransformer+Clustering
+
+#### Topic Comparison Request Example:
+```json
+{
+  "transcript": "So let's let's take it past the point where you have these scales...",
+  "top_n": 5
+}
+```
+
+#### Topic Comparison Response Example:
+```json
+{
+  "results": [
+    {
+      "method": "TF-IDF",
+      "topics": ["mars", "like", "time", "yeah", "just"],
+      "time_sec": 0.004,
+      "memory_mb": 0.2
+    },
+    {
+      "method": "KeyBERT",
+      "topics": ["mars", "ship", "scales", "synchronization", "hopefully"],
+      "time_sec": 6.528,
+      "memory_mb": 73.8
+    }
+  ],
+  "summary": {
+    "total_methods": 5,
+    "fastest_method": "TF-IDF",
+    "most_memory_efficient": "DistilBERT+Clustering"
+  }
+}
+```
+
+### GET /topic-extraction-comparison/methods
+- **Input**: None
+- **Output**: Available topic extraction methods with descriptions
+- **Description**: Get information about all available topic extraction methods
+
 ### POST /match
 - **Input**: Two user IDs + optional topics and weights
 - **Output**: Compatibility score + interpretation
 - **Description**: Computes user compatibility using weighted topic and psychometric vectors
 
-#### Match Request Example (topics can be found in rhe response of POST/transcribe):
+#### Match Request Example (topics can be found in the response of POST/transcribe-summarise):
 ```json
 {
   "user1_id": "user_1",
@@ -180,6 +248,8 @@ upload audio_file
 ```
 
 ## Architecture & Design Decisions
+
+**Current Focus**: Lightweight, CPU-friendly protoptye (Whisper-base, KeyBERT, TF-IDF) that provide good performance without requiring expensive hardware.
 
 ### Development Workflow
 1. **Experiments**: Jupyter notebooks for prototyping and analysis
@@ -292,6 +362,13 @@ User Profiles → Vectorization → Compatibility Matching
 
 The following components are currently stubbed out and ready for implementation:
 
+**LLM Fine Tuning & Orchestration**
+  - **GPT-2/LLaMA Fine Tuning**: Custom models for domain-specific summarization and matching
+  - **LangChain Integration**: Advanced LLM orchestration and chaining
+  - **OpenAI API**: GPT models for enhanced text understanding and generation
+
+	**Note**: These advanced features are not implemented in the current version due to hardware constraints (limited GPU memory and compute resources). The current implementation focuses on CPU-optimized, lightweight models for accessibility.
+
 **Configuration Management** (`app/utils/config.py`)
   - Environment-based configuration (dev/staging/prod)
   - Model parameter configuration (Whisper model size, KeyBERT settings)
@@ -311,5 +388,32 @@ The following components are currently stubbed out and ready for implementation:
 **Database Integration**: User profiles, conversation history
 **CI/CD**
 
-
 ## Creative Extensions
+
+### **Enhanced API Endpoints**
+
+#### **Combined Transcribe & Summarise** (`/transcribe-summarise`)
+- **Purpose**: Single API call for complete audio processing pipeline
+- **Input**: Audio file (WAV, MP3, etc.)
+- **Output**: Transcript, extracted topics, and intelligent summary
+- **Benefits**: 
+  - Reduces API calls from 2 to 1
+  - Maintains topic consistency between extraction and summarization
+  - Better user experience for complete audio analysis
+
+#### **Topic Extraction Comparison** (`/topic-extraction-comparison`)
+- **Purpose**: Compare different topic extraction methods on the same transcript
+- **Methods**: TF-IDF, spaCy, KeyBERT, DistilBERT+Clustering, SentenceTransformer+Clustering
+- **Features**:
+  - Performance metrics (time, memory usage)
+  - Side-by-side topic quality comparison
+  - Method recommendations based on use case
+- **Benefits**:
+  - Research and experimentation tool
+  - Method selection guidance
+  - Performance benchmarking
+
+#### **Method Information** (`/topic-extraction-comparison/methods`)
+- **Purpose**: Get detailed information about available topic extraction methods
+- **Output**: Method descriptions, pros/cons, use case recommendations
+- **Benefits**: API documentation and method selection guidance
