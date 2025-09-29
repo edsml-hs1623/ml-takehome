@@ -90,6 +90,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 ```bash
 pip install -r requirements.txt
+python -m spacy download en_core_web_sm
 ```
 
 4. Run FastAPI server
