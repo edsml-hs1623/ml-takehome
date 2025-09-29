@@ -289,12 +289,23 @@ User Profiles → Vectorization → Compatibility Matching
 - **Features**: MMR (Maximal Marginal Relevance) to reduce redundant keywords
 - **Output**: `['starships', 'terraforming', 'scales', 'plan', 'synchronization']`
 
-#### 3. **Summarization (Topic-Guided Extractive)**
-**Decision**: Custom extractive summarization over simple truncation
-- **Approach**: Score sentences based on multiple factors:
-  - **Topic Relevance**: Higher score for sentences containing extracted topics
-  - **Position Bias**: Slight preference for first/last sentences
-  - **Length Filtering**: Prefer medium-length sentences (20-200 chars)
+#### 3. **Summarization (Advanced Conversational Processing)**
+**Decision**: Single-sentence summarization with 6-factor scoring system over multi-sentence approach
+- **Method Comparison**:
+  - **Multi-sentence**: Struggles with conversational noise, requires post-processing
+  - **Single-sentence**: **Selected** - Advanced preprocessing and scoring for conversational audio
+- **Performance**: 79.5% length reduction while maintaining information quality
+- **Advanced Scoring System**:
+  - **Topic Relevance (40%)**: Prioritize sentences containing extracted topics
+  - **Content Density (20%)**: Prefer substantial, meaningful content
+  - **Position Weighting (25%)**: Focus on middle content (main discussion)
+  - **Conversational Elements (10%)**: Bonus for questions and future statements
+  - **Length Optimization**: Penalize too short (<30 chars) or too long (>300 chars)
+  - **Quality Checks**: Avoid incomplete thoughts ending with conjunctions
+- **Conversational Handling**:
+  - **Filler Removal**: Automatically removes "yeah", "uh", "um", "like", "you know"
+  - **Regex Splitting**: Better sentence detection for conversational speech
+  - **Quality Filtering**: Only keeps substantial sentences (>15 chars)
 
 #### 4. **Vector Fusion & Matching**
 **Decision**: Weighted concatenation with comprehensive edge-case handling
