@@ -11,47 +11,96 @@ def extract_topics(transcript: str, top_n=5, model="all-MiniLM-L6-v2") -> list[s
 
 def generate_summary(transcript: str, topics: list[str]) -> str:
     """
-    Generate summary based on extracted topics using topic-guided extractive summarization
+    Generate intelligent summary for conversational audio using advanced topic-guided extractive summarization
     """
-    sentences = [s.strip() for s in transcript.split('.') if s.strip()]
+    import re
+    
+    # Better sentence splitting for conversational content
+    sentences = re.split(r'[.!?]+', transcript)
+    sentences = [s.strip() for s in sentences if s.strip() and len(s.strip()) > 10]
     
     if len(sentences) <= 2:
         return transcript
     
-    # Score sentences based on topic relevance and position
+    # Clean up conversational fillers and improve sentence quality
+    cleaned_sentences = []
+    for sentence in sentences:
+        # Remove excessive repetition and fillers
+        sentence = re.sub(r'\b(yeah|uh|um|like|you know|so|well)\b', '', sentence, flags=re.IGNORECASE)
+        sentence = re.sub(r'\s+', ' ', sentence).strip()
+        if len(sentence) > 15:  # Only keep substantial sentences
+            cleaned_sentences.append(sentence)
+    
+    if len(cleaned_sentences) <= 2:
+        return transcript
+    
+    # Advanced scoring system for conversational content
     scored_sentences = []
-    for i, sentence in enumerate(sentences):
+    for i, sentence in enumerate(cleaned_sentences):
         score = 0
         
-        # Topic relevance score (higher if sentence contains more topics)
+        # 1. Topic relevance (most important)
         topic_matches = sum(1 for topic in topics if topic.lower() in sentence.lower())
-        topic_score = topic_matches / len(topics) if topics else 0
+        topic_score = (topic_matches / len(topics)) * 0.4 if topics else 0
         
-        # Position score (slight bias toward beginning and end)
-        if i == 0:  # First sentence
-            position_score = 0.3
-        elif i == len(sentences) - 1:  # Last sentence
-            position_score = 0.2
+        # 2. Content density (prefer sentences with more meaningful content)
+        word_count = len(sentence.split())
+        content_density = min(word_count / 50, 1.0) * 0.2
+        
+        # 3. Position weighting (conversational structure)
+        total_sentences = len(cleaned_sentences)
+        if i < total_sentences * 0.1:  # First 10% - introduction
+            position_score = 0.15
+        elif i > total_sentences * 0.8:  # Last 20% - conclusion
+            position_score = 0.15
+        elif total_sentences * 0.3 <= i <= total_sentences * 0.7:  # Middle 40% - main content
+            position_score = 0.25
         else:
             position_score = 0.1
         
-        # Length penalty (prefer medium-length sentences)
-        length_penalty = 0.1 if len(sentence) < 20 or len(sentence) > 200 else 0
+        # 4. Question/statement bonus (conversational elements)
+        if '?' in sentence:
+            question_bonus = 0.1
+        elif any(word in sentence.lower() for word in ['plan', 'next', 'future', 'will', 'going to']):
+            future_bonus = 0.1
+        else:
+            question_bonus = 0
+            future_bonus = 0
+        
+        # 5. Length penalty (avoid too short or too long)
+        if len(sentence) < 30:
+            length_penalty = 0.1
+        elif len(sentence) > 300:
+            length_penalty = 0.05
+        else:
+            length_penalty = 0
+        
+        # 6. Conversational quality (avoid incomplete thoughts)
+        if sentence.endswith(('and', 'but', 'so', 'because', 'the')):
+            incomplete_penalty = 0.1
+        else:
+            incomplete_penalty = 0
         
         # Combined score
-        score = topic_score + position_score - length_penalty
+        score = topic_score + content_density + position_score + question_bonus + future_bonus - length_penalty - incomplete_penalty
         scored_sentences.append((score, sentence, i))
     
-    # Sort by score and take top sentences
+    # Sort by score and select diverse sentences
     scored_sentences.sort(key=lambda x: x[0], reverse=True)
     
-    # Take 2-3 best sentences, maintaining original order
-    selected_indices = sorted([item[2] for item in scored_sentences[:3]])
-    summary_sentences = [sentences[i] for i in selected_indices]
-    
-    # Join and clean up
-    summary = '. '.join(summary_sentences)
-    if not summary.endswith('.'):
-        summary += '.'
+    # Select the single best sentence that captures the essence
+    if scored_sentences:
+        best_sentence = scored_sentences[0][1]  # Get the highest scoring sentence
+        
+        # Clean up the sentence for better readability
+        best_sentence = re.sub(r'\s+', ' ', best_sentence).strip()
+        
+        # Ensure it ends with proper punctuation
+        if not best_sentence.endswith(('.', '!', '?')):
+            best_sentence += '.'
+        
+        summary = best_sentence
+    else:
+        summary = transcript
     
     return summary
