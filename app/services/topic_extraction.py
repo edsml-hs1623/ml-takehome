@@ -11,7 +11,33 @@ def extract_topics(transcript: str, top_n=5, model="all-MiniLM-L6-v2") -> list[s
 
 def generate_summary(transcript: str, topics: list[str]) -> str:
     """
-    Generate intelligent summary for conversational audio using advanced topic-guided extractive summarization
+    Generate intelligent single-sentence summary for conversational audio using advanced topic-guided extractive summarization.
+    
+    This function processes conversational transcripts by:
+    1. Splitting text into sentences using regex patterns for better conversational handling
+    2. Cleaning up fillers and repetitive phrases (yeah, uh, um, like, you know, etc.)
+    3. Scoring sentences based on multiple criteria:
+       - Topic relevance (40% weight): How many extracted topics appear in the sentence
+       - Content density (20% weight): Word count and meaningful content
+       - Position weighting: Prioritizes middle content (main discussion) over intro/conclusion
+       - Conversational elements: Bonus for questions and future-oriented statements
+       - Length optimization: Penalizes too short (<30 chars) or too long (>300 chars) sentences
+       - Quality checks: Avoids incomplete thoughts ending with conjunctions
+    4. Selecting the single highest-scoring sentence that best captures the conversation's essence
+    
+    Args:
+        transcript (str): Raw conversational transcript text
+        topics (list[str]): List of extracted topics to guide summarization
+        
+    Returns:
+        str: Single-sentence summary that captures the key points of the conversation
+        
+    Example:
+        >>> topics = ["mars", "starships", "landing"]
+        >>> transcript = "So let's talk about Mars missions. Yeah, we have reusable ships..."
+        >>> summary = generate_summary(transcript, topics)
+        >>> print(summary)
+        "The discussion covers Mars mission planning with reusable ships and landing strategies."
     """
     import re
     
