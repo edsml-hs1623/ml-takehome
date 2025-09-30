@@ -8,8 +8,8 @@ from app.utils.io_utils import load_users
 router = APIRouter()
 
 class MatchRequest(BaseModel):
-    user1_id: str
-    user2_id: str
+    user1_id: str = "user_1"
+    user2_id: str = "user_2"
     topics: Optional[list[str]] = None
     topic_weight: Optional[float] = 0.5
     psych_weight: Optional[float] = 1.0
