@@ -85,13 +85,13 @@ def generate_summary(transcript: str, topics: list[str]) -> str:
             position_score = 0.1
         
         # 4. Question/statement bonus (conversational elements)
+        question_bonus = 0
+        future_bonus = 0
+        
         if '?' in sentence:
             question_bonus = 0.1
         elif any(word in sentence.lower() for word in ['plan', 'next', 'future', 'will', 'going to']):
             future_bonus = 0.1
-        else:
-            question_bonus = 0
-            future_bonus = 0
         
         # 5. Length penalty (avoid too short or too long)
         if len(sentence) < 30:

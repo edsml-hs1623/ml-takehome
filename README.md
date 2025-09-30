@@ -147,6 +147,24 @@ docker rm ml-api
 
 ## API Endpoints
 
+### GET /health
+- **Input**: None
+- **Output**: System health status with test results
+- **Description**: Runs full test suite and returns health status
+
+#### Health Check Response Example:
+```json
+{
+  "status": "healthy",
+  "total_tests": 28,
+  "passed_tests": 28,
+  "failed_tests": 0,
+  "execution_time": 23.5,
+  "test_results": [],
+  "summary": "Tests: 28/28 passed, Execution time: 23.50s"
+}
+```
+
 ### POST /transcribe
 - **Input**: Audio file (wav, mp3, etc.)
 - **Output**: Transcript text
@@ -400,6 +418,49 @@ The following components are currently stubbed out and ready for implementation:
 **Load Balancing**: Handle multiple concurrent requests
 **Database Integration**: User profiles, conversation history
 **CI/CD**
+
+## Testing
+
+The project includes comprehensive unit tests using pytest:
+
+```bash
+# Activate virtual environment first
+source venv/bin/activate
+
+# Run all tests (28 tests, ignore warnings from spaCy and weasel libraries, bceause they are Click API changes, not an issue with the code)
+python -m pytest -W ignore::DeprecationWarning
+python -m pytest
+
+# Run specific test file
+python -m pytest tests/test_user_matching.py -v
+
+# Run with more verbose output
+python -m pytest -v --tb=long
+
+# Test health check endpoint (requires running server)
+curl -X GET "http://localhost:8000/health/" -H "accept: application/json"
+```
+
+### **Test Coverage**
+- **28 Total Tests**: Streamlined and efficient test suite
+- **Unit Tests**: Individual function testing (18 tests)
+- **API Tests**: HTTP endpoint testing (10 tests)
+- **Integration Tests**: Complete workflow testing (1 test)
+- **Edge Cases**: Error handling and boundary conditions (consolidated)
+
+### **Test Files**
+- `test_router.py` - API endpoint tests (10 tests)
+- `test_user_matching.py` - User compatibility scoring (6 tests)
+- `test_topic_extraction.py` - Topic extraction and summarization (5 tests)
+- `test_vectorization.py` - Vector operations (4 tests)
+- `test_transcription.py` - Audio transcription (2 tests)
+- `test_integration.py` - End-to-end workflows (1 test)
+
+### **Test Performance**
+- **Fast Execution**: ~28 seconds for full test suite
+- **No Redundancy**: Removed 9 duplicate/unnecessary tests
+- **Comprehensive Coverage**: All core functionality tested
+- **Edge Case Testing**: Consolidated into efficient test groups
 
 ## Creative Extensions
 
